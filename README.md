@@ -1,5 +1,5 @@
 # Reach Entity Attributes
-[![Maven Repository](https://img.shields.io/maven-metadata/v/https/maven.jamieswhiteshirt.com/libs-release/com/jamieswhiteshirt/reach-entity-attributes/maven-metadata.xml.svg)](https://maven.jamieswhiteshirt.com/libs-release/com/jamieswhiteshirt/reach-entity-attributes/)
+**THIS IS AN UNOFFICIAL FORK, USE AT YOUR OWN RISK!**
 
 **A library mod for Minecraft that implements entity attributes for reach distance and attack range**
 
@@ -7,19 +7,15 @@
 
 ### Setup
 To use and include this mod in your project, add the following to your buildscript:
+*NOTE: This fork uses JitPack.*
 
 ```groovy
 repositories {
-    maven {
-        url "https://maven.jamieswhiteshirt.com/libs-release"
-        content {
-            includeGroup "com.jamieswhiteshirt"
-        }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:$VERSION")
+    include modImplementation 'com.github.MCLegoMan:reach-entity-attributes:-SNAPSHOT'
 }
 ```
 
