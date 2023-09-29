@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    include modImplementation 'com.github.MCLegoMan:reach-entity-attributes:2.3.2-1.20.x'
+    include modImplementation 'com.github.MCLegoMan:reach-entity-attributes:2.4.0'
 }
 ```
 

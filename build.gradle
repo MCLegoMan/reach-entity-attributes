@@ -1,113 +1,57 @@
-import org.gradle.util.GradleVersion
-import java.time.Instant
-
 plugins {
-    id "fabric-loom" version "1.0.18"
-    id "net.nemerosa.versioning" version "3.0.0"
-    id "maven-publish"
-    id "signing"
+    id 'fabric-loom' version '1.3-SNAPSHOT'
+    id 'maven-publish'
 }
 
-group = maven_group
-version = mod_version
+version = project.mod_version
+group = project.maven_group
 
-final isReleaseVersion = !version.endsWith("-SNAPSHOT")
-
-java {
-    withSourcesJar()
+base {
+    archivesName = project.archives_base_name
 }
 
-loom {
-    mixin {
-        defaultRefmapName.set("refmap.reach-entity-attributes.json")
-    }
-    runs {
-        configureEach {
-            property "mixin.debug", "true"
-            property "mixin.debug.export.decompile", "false"
-            property "mixin.debug.verbose", "true"
-            property "mixin.dumpTargetOnFailure", "true"
-            property "mixin.checks", "true"
-            property "mixin.hotSwap", "true"
-        }
-    }
+repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:$minecraft_version"
-    mappings "net.fabricmc:yarn:$yarn_mappings"
-    modImplementation "net.fabricmc:fabric-loader:$loader_version"
-    modImplementation fabricApi.module("fabric-resource-loader-v0", fabric_version)
-    modImplementation fabricApi.module("fabric-registry-sync-v0", fabric_version)
-    implementation("com.google.code.findbugs:jsr305:$jsr305_version") {
-        transitive = false
-    }
-}
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-compileJava {
-    options.with {
-        it.release.set(17)
-        it.fork = true
-        it.deprecation = true
-        it.encoding = "UTF-8"
-        it.compilerArgs = ["-Xlint:all", "-parameters"]
-    }
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
     inputs.property "version", project.version
-    filesMatching("/fabric.mod.json") {
+
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
 }
 
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
+java {
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 jar {
-    from "/LICENSE"
-    manifest.attributes([
-      "Build-Timestamp": Instant.now(),
-      "Build-Revision": versioning.info.commit,
-      "Build-Jvm": "" +
-        "${System.getProperty("java.version")} (" +
-        "${System.getProperty("java.vm.vendor")} " +
-        "${System.getProperty("java.vm.version")})",
-      "Built-By": GradleVersion.current(),
-
-      "Implementation-Title": project.name,
-      "Implementation-Version": project.version,
-      "Implementation-Vendor": project.group,
-
-      "Specification-Title": "FabricMod",
-      "Specification-Version": "1.0.0",
-      "Specification-Vendor": "dev.sapphic",
-
-      "Sealed": "true"
-    ])
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}"}
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            afterEvaluate {
-                artifact remapJar
-                artifact(sourcesJar.archiveFile) {
-                    classifier = "sources"
-                    builtBy remapSourcesJar
-                }
-            }
+            from components.java
         }
     }
     repositories {
-        maven {
-            url = "https://maven.jamieswhiteshirt.com/libs-" + (isReleaseVersion ? "release" : "snapshot")
-            credentials {
-                username = project.properties.jwsMavenUser
-                password = project.properties.jwsMavenPassword
-            }
-        }
     }
-}
-
-signing {
-    required = isReleaseVersion
-    sign publishing.publications.mavenJava
 }
