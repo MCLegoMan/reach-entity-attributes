@@ -6,8 +6,8 @@
 ## Usage
 
 ### Setup
-To use and include this mod in your project, add the following to your buildscript:
-*NOTE: This fork uses JitPack.*
+To use and include this mod in your project, add the following to your buildscript:  
+*NOTE: This fork adds JitPack support.*
 
 ```groovy
 repositories {
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    include modImplementation 'com.github.MCLegoMan:reach-entity-attributes:-SNAPSHOT'
+    include modImplementation 'com.github.MCLegoMan:reach-entity-attributes:2.3.2-1.20.x'
 }
 ```
 
